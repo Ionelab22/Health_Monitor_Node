@@ -1,13 +1,9 @@
 // src/cors.js
 const corsOptions = {
-  origin: [
-    'https://ionelab22.github.io', // frontend live pe GitHub Pages
-    'https://health-monitor-node.onrender.com', // backend live pe Render
-    'http://localhost:3000', // pentru development
-    'http://localhost:5173',
-  ],
+  origin: '*', // orice origine permisă
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204,
 };
 

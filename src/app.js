@@ -17,43 +17,32 @@ require('dotenv').config();
 
 const app = express();
 
-// 🔹 Setează logger-ul
+// 🔹 Logger
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 app.use(logger(formatsLogger));
 
-// 🔹 CORS pentru GitHub Pages + Render
-app.use(
-  cors({
-    origin: [
-      'https://ionelab22.github.io', // site-ul tău GitHub Pages
-      'https://health-monitor-node.onrender.com', // backendul tău Render
-      'http://localhost:5173', // local frontend (vite)
-      'http://localhost:3000', // local fallback
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+// 🔹 CORS global (din cors.js)
+app.use(cors(corsOptions));
 
+// 🔹 Parse JSON + fișiere statice
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 🔹 Passport (înainte de rute)
+app.use(passport.initialize());
+
 // 🔹 Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// 🔹 Rutele API
-app.use('/api', authRouter);
-app.use('/api', privateRouter);
-app.use('/api', healthRouter);
 
 // 🔹 Health check pentru Render
 app.get('/healthz', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// 🔹 Passport init
-app.use(passport.initialize());
+// 🔹 Rutele API
+app.use('/api', authRouter);
+app.use('/api', privateRouter);
+app.use('/api', healthRouter);
 
 // 🔹 404
 app.use((_, res, __) => {
@@ -67,7 +56,7 @@ app.use((_, res, __) => {
 
 // 🔹 500
 app.use((err, _, res, __) => {
-  console.error(err.stack);
+  console.error('💥 SERVER ERROR:', err.stack);
   res.status(500).json({
     status: 'fail',
     code: 500,
