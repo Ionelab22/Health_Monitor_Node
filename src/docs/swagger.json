@@ -7,8 +7,12 @@
   },
   "servers": [
     {
+      "url": "https://health-monitor-node.onrender.com",
+      "description": "Render production server"
+    },
+    {
       "url": "http://localhost:5000",
-      "description": "Local server"
+      "description": "Local development server"
     }
   ],
   "paths": {
