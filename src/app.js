@@ -2,9 +2,7 @@
 /* eslint-disable no-undef */
 const express = require('express');
 const logger = require('morgan');
-
 const passport = require('./passport/passportConfig');
-
 const cors = require('cors');
 const corsOptions = require('./cors');
 
@@ -14,49 +12,62 @@ const healthRouter = require('./routes/api/healthRoutes');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
-
 const path = require('path');
-
-// const sgMail = require('@sendgrid/mail');/
 require('dotenv').config();
-
-// const sendGridApiKey = process.env.SENDGRID_API_KEY;
-// if (!sendGridApiKey) throw new Error('SendGrid API key is missing.');
-
-// sgMail.setApiKey(sendGridApiKey);
 
 const app = express();
 
+// 🔹 Setează logger-ul
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
-
 app.use(logger(formatsLogger));
-app.use(cors(corsOptions));
-// Varianta noua !!!
-// app.options('*', cors(corsOptions));
-app.use(express.json());
-// app.use(logger("tiny"));
 
+// 🔹 CORS pentru GitHub Pages + Render
+app.use(
+  cors({
+    origin: [
+      'https://ionelab22.github.io', // site-ul tău GitHub Pages
+      'https://health-monitor-node.onrender.com', // backendul tău Render
+      'http://localhost:5173', // local frontend (vite)
+      'http://localhost:3000', // local fallback
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 🔹 Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// 🔹 Rutele API
 app.use('/api', authRouter);
 app.use('/api', privateRouter);
 app.use('/api', healthRouter);
 
+// 🔹 Health check pentru Render
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+// 🔹 Passport init
 app.use(passport.initialize());
 
+// 🔹 404
 app.use((_, res, __) => {
   res.status(404).json({
     status: 'error',
     code: 404,
-    message: 'Use api on routes: /api/users, /api/private or /api/public  ',
+    message: 'Use API on routes: /api/users, /api/private or /api/public',
     data: 'Not found',
   });
 });
 
+// 🔹 500
 app.use((err, _, res, __) => {
-  console.log(err.stack);
+  console.error(err.stack);
   res.status(500).json({
     status: 'fail',
     code: 500,
