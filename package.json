@@ -1,5 +1,5 @@
 {
-  "name": "health_individual_project_node",
+  "name": "health_monitor_node",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
