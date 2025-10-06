@@ -1,24 +1,14 @@
+// src/cors.js
 const corsOptions = {
-  // Permite doar cereri de la această origine
-  origin: '*',
-  // Permite metodele GET,POST,PUT,PATCH si DELETE
-  methods: 'GET,POST,PUT,PATCH,DELETE',
-  // Returnează un status 204 pentru cererile prefligth (OPTIONS)
+  origin: [
+    'https://ionelab22.github.io', // frontend live pe GitHub Pages
+    'https://health-monitor-node.onrender.com', // backend live pe Render
+    'http://localhost:3000', // pentru development
+    'http://localhost:5173',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  credentials: true,
   optionsSuccessStatus: 204,
 };
 
-module.exports = {
-  corsOptions,
-};
-
-// Varianta noua !!!
-// const corsOptions = {
-//   // Permite doar cereri de la această origine
-//   origin: '*',
-//   // Permite metodele GET,POST,PUT,PATCH si DELETE
-//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Returnează un status 204 pentru cererile prefligth (OPTIONS)
-//   credentials: true,
-//   optionsSuccessStatus: 204,
-// };
-
-// module.exports = corsOptions;
+module.exports = corsOptions;
