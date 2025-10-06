@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Nutrition API",
+    "title": "Health_Monitor API",
     "version": "1.0.0",
-    "description": "API for tracking daily calorie intake and managing user data"
+    "description": "API for tracking daily calorie intake and all users activities and health reminders and managing user data"
   },
   "servers": [
     {
