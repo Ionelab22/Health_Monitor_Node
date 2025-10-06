@@ -17,13 +17,13 @@ const swaggerDocument = require('./docs/swagger.json');
 
 const path = require('path');
 
-const sgMail = require('@sendgrid/mail');
+// const sgMail = require('@sendgrid/mail');/
 require('dotenv').config();
 
-const sendGridApiKey = process.env.SENDGRID_API_KEY;
-if (!sendGridApiKey) throw new Error('SendGrid API key is missing.');
+// const sendGridApiKey = process.env.SENDGRID_API_KEY;
+// if (!sendGridApiKey) throw new Error('SendGrid API key is missing.');
 
-sgMail.setApiKey(sendGridApiKey);
+// sgMail.setApiKey(sendGridApiKey);
 
 const app = express();
 
