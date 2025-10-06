@@ -149,13 +149,10 @@ exports.verifyUserEmail = async (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     console.log(
       'Redirecting to:',
-      'https://turbomatrixxxl.github.io/Health-Monitor/'
+      'https://Ionelab22.github.io/Health_Monitor/'
     );
 
-    return res.redirect(
-      302,
-      'https://turbomatrixxxl.github.io/Health-Monitor/'
-    );
+    return res.redirect(302, 'https://Ionelab22.github.io/Health_Monitor/');
   } catch (error) {
     res
       .status(404)
