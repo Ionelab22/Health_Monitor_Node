@@ -49,41 +49,85 @@
 
 // src/utils/emailService.js
 
+// /* eslint-disable no-undef */
+// const { Resend } = require('resend');
+
+// const { v4: uuidv4 } = require('uuid');
+
+// require('dotenv').config();
+// const resend = new Resend(process.env.RESEND_API_KEY);
+
+// const sendVerificationEmail = async (email) => {
+//   const verificationToken = uuidv4();
+
+//   try {
+//     const verificationLink = `https://health-monitor-node.onrender.com/api/users/verify/${verificationToken}`;
+
+//     const { data, error } = await resend.emails.send({
+//       from: 'Health_Monitor App <onboarding@resend.dev>',
+//       to: email,
+//       subject: 'Verify your Health Monitor account',
+//       html: `
+//         <h2>Welcome to Health Monitor 🩺</h2>
+//         <p>Click the button below to verify your email address:</p>
+//         <a href="${verificationLink}"
+//            style="background-color:#3b82f6;color:white;padding:10px 15px;border-radius:8px;text-decoration:none;">
+//            Verify Email
+//         </a>
+//         <p>If the button doesn’t work, copy this link: ${verificationLink}</p>
+//       `,
+//     });
+
+//     if (error) throw new Error(`Email not sent: ${error.message}`);
+//     console.log('✅ Verification email sent via Resend:', data?.id);
+//     return verificationToken;
+//   } catch (err) {
+//     console.error('❌ Email send error:', err.message);
+//     throw new Error(`Email not sent! The error is: ${err.message}`);
+//   }
+// };
+
+// module.exports = sendVerificationEmail;
+
 /* eslint-disable no-undef */
-const { Resend } = require('resend');
-
+const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
-
 require('dotenv').config();
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendVerificationEmail = async (email) => {
   const verificationToken = uuidv4();
+  const verificationLink = `https://health-monitor-node.onrender.com/api/users/verify/${verificationToken}`;
 
   try {
-    const verificationLink = `https://health-monitor-node.onrender.com/api/users/verify/${verificationToken}`;
+    await axios.post(
+      'https://api.brevo.com/v3/smtp/email',
+      {
+        sender: { name: 'Health Monitor', email: 'bocoiuionela4@gmail.com' },
+        to: [{ email }],
+        subject: 'Verify your Health Monitor account',
+        htmlContent: `
+          <h2>Welcome to Health Monitor 🩺</h2>
+          <p>Click below to verify your email:</p>
+          <a href="${verificationLink}"
+             style="background-color:#3b82f6;color:white;padding:10px 15px;border-radius:8px;text-decoration:none;">
+             Verify Email
+          </a>
+          <p>If the button doesn't work, copy this link: ${verificationLink}</p>
+        `,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+        },
+      }
+    );
 
-    const { data, error } = await resend.emails.send({
-      from: 'Health_Monitor App <onboarding@resend.dev>',
-      to: email,
-      subject: 'Verify your Health Monitor account',
-      html: `
-        <h2>Welcome to Health Monitor 🩺</h2>
-        <p>Click the button below to verify your email address:</p>
-        <a href="${verificationLink}" 
-           style="background-color:#3b82f6;color:white;padding:10px 15px;border-radius:8px;text-decoration:none;">
-           Verify Email
-        </a>
-        <p>If the button doesn’t work, copy this link: ${verificationLink}</p>
-      `,
-    });
-
-    if (error) throw new Error(`Email not sent: ${error.message}`);
-    console.log('✅ Verification email sent via Resend:', data?.id);
+    console.log('✅ Verification email sent successfully!');
     return verificationToken;
-  } catch (err) {
-    console.error('❌ Email send error:', err.message);
-    throw new Error(`Email not sent! The error is: ${err.message}`);
+  } catch (error) {
+    console.error('❌ Email not sent:', error.response?.data || error.message);
+    throw new Error('Email not sent!');
   }
 };
 
